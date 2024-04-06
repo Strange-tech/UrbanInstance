@@ -81,18 +81,19 @@ COLOR = np.array(
     ]).reshape(-1, 3)
 
 # area9 = np.loadtxt("../dataset/Area9.txt")
-area49 = np.loadtxt("../dataset/Area49.txt")
+# area49 = np.loadtxt("../dataset/Area49.txt")
+area46 = np.loadtxt("../dataset/Area46.txt")
 
 # X Y Z R G B Semantic_label Instance_label Fine-grained_building_category
 
-print(area49.shape)
+print(area46.shape)
 
 # 'Building': 6
 
 building_dic = {}
 
-for i in range(len(area49)):
-    el = area49[i]
+for i in range(len(area46)):
+    el = area46[i]
     if el[-3] == 6:
         if str(el[-2]) in building_dic:
             building_dic[str(el[-2])].append(el)
@@ -102,7 +103,7 @@ for i in range(len(area49)):
 # print(building_dic)
 for key in building_dic.keys():
     print(key, len(building_dic[key]))
-    np.savetxt("../gt_instance/buildings_area49/" + key[:-2] + ".txt", building_dic[key])
+    np.savetxt("../gt_instance/buildings_area46/" + key[:-2] + ".txt", building_dic[key])
 
 
 
