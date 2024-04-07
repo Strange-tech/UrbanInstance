@@ -4,4 +4,8 @@
 2. Match similar point cloud instances
 3. Compute spatial transformations from similar instances
 
-![avatar](./img/2024-04-07%2000.18.27.png)
+![avatar](./img/2024-04-07%2010.27.40.png)
+
+![avatar](./img/2024-04-07%2010.27.46.png)
+
+![avatar](./img/2024-04-07%2010.27.51.png)
