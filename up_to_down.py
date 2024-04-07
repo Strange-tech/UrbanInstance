@@ -31,6 +31,22 @@ def inside_ROI(points, roi):
     return res
 
 
+def get_ROIs(instances):
+    rois = []
+    for i in range(len(instances)):
+        inst = np.array(instances[i])
+
+        max_x = np.max(inst[:, 0])
+        min_x = np.min(inst[:, 0])
+        max_y = np.max(inst[:, 1])
+        min_y = np.min(inst[:, 1])
+
+        roi = [[min_x, min_y], [max_x, max_y]]
+
+        rois.append(roi)
+    
+    return rois
+
 building_pc = o3d.io.read_point_cloud("./gt_instance/buildings_area46/524.txt", format="xyz")
 
 points = np.asarray(building_pc.points)
@@ -60,7 +76,7 @@ while(idx < l):
     print(n_clusters_)
 
     block_instances = [None] * n_clusters_
-    block_instances_roi = [None] * n_clusters_
+    # block_instances_roi = [None] * n_clusters_
 
     for i in range(len(labels)):
         if block_instances[labels[i]] == None:
@@ -69,27 +85,16 @@ while(idx < l):
     
     print("len block instances:", len(block_instances))
 
-
-    for i in range(len(block_instances)):
-        inst = np.array(block_instances[i])
-
-        max_x = np.max(inst[:, 0])
-        min_x = np.min(inst[:, 0])
-        max_y = np.max(inst[:, 1])
-        min_y = np.min(inst[:, 1])
-
-        roi = [[min_x, min_y], [max_x, max_y]]
-
-        block_instances_roi[i] = roi
+    block_instances_roi = get_ROIs(block_instances)
 
     block2building_idx_map = {}
     map_flag = False
 
     print(len(block_instances_roi), len(building_instances_roi))
 
-    if len(building_instances_roi) == 0:
-        building_instances_roi = block_instances_roi.copy()
-    else:
+    # if len(building_instances_roi) == 0:
+        # building_instances_roi = block_instances_roi.copy()
+    if len(building_instances_roi) > 0:
         if len(block_instances_roi) < len(building_instances_roi):
             REACH_BASE = True
         elif len(block_instances_roi) > len(building_instances_roi):
@@ -116,10 +121,22 @@ while(idx < l):
                         block2building_idx_map[roi1_idx] = roi2_idx
                         break
         
-        if REACH_BASE == False:
-            building_instances_roi = block_instances_roi.copy()
+        # if REACH_BASE == False:
+        #     building_instances_roi = block_instances_roi.copy()
 
     print(block2building_idx_map)
+
+    print(building_instances_roi)
+    print("building inst sample:")
+    for inst in building_instances:
+        print(inst[0])
+
+    print(' ')
+
+    print(block_instances_roi)
+    print("block inst sample:")
+    for inst in block_instances:
+        print(inst[0])
     
     if len(building_instances) == 0:
         building_instances = block_instances.copy()
@@ -140,7 +157,9 @@ while(idx < l):
                 else:
                     building_instances[building_idx] = np.vstack((building_instances[building_idx], block_inst))
 
+    building_instances_roi = get_ROIs(building_instances)
     print(len(building_instances))
+
     last_time_idx += step
 
 for id, inst in enumerate(building_instances):
