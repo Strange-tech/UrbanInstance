@@ -3,51 +3,77 @@ import open3d as o3d
 import numpy as np
 import math
 from sklearn.cluster import DBSCAN, KMeans
+from utils.obb import OBB
 
-ROI_MIN_DISTANCE = 100.0
+ROI_THRESHOLD = 10.0
 SET_NEW = 1e8
 REACH_BASE = False
 
+areaID = 47
+area_path = "./gt_instance/buildings_area" + str(areaID) + "/"
+buildingID = 985
+
     
 def compare_ROIs(roi1, roi2):
-    roi1 = np.array(roi1)
-    roi2 = np.array(roi2)
+    # roi1 = np.array(roi1)
+    # roi2 = np.array(roi2)
 
-    is_contain = False
-    if (roi1[0] - roi2[0]).all() <= 0 and (roi1[1] - roi2[1]).all() >= 0:
-        is_contain = True
-    d0 = np.sum(np.square(roi1[0] - roi2[0]))
-    d1 = np.sum(np.square(roi1[1] - roi2[1]))
+    # is_contain = False
+    # if (roi1[0] - roi2[0]).all() <= 0 and (roi1[1] - roi2[1]).all() >= 0:
+    #     is_contain = True
+    # d0 = np.sum(np.square(roi1[0] - roi2[0]))
+    # d1 = np.sum(np.square(roi1[1] - roi2[1]))
 
-    return is_contain, d0 + d1
+    # return is_contain, d0 + d1
+    center_diff = np.sqrt(np.sum(np.square(roi1["center"] - roi2["center"])))
+    return center_diff
 
 
 def inside_ROI(points, roi):
-    res = []
-    for p in points:
-        if p[0] > roi[0][0] and p[1] > roi[0][1] and p[0] <= roi[1][0] and p[1] <= roi[1][1]:
-            res.append(p)
+    # res = []
+    # for p in points:
+    #     if p[0] > roi[0][0] and p[1] > roi[0][1] and p[0] <= roi[1][0] and p[1] <= roi[1][1]:
+    #         res.append(p)
 
-    return res
+    # return res
+    res_idx = []
 
+    pointArray = np.array(points)
 
-def get_ROIs(instances):
+    vect = roi["eigenvector"]
+    tvect = np.transpose(vect)
+    points_2d = pointArray[:, :2]
+    trans_points_2d = np.dot(points_2d, np.linalg.inv(tvect))
+
+    mina = roi["mina"]
+    maxa = roi['maxa']
+
+    for i, p in enumerate(trans_points_2d):
+        if p[0] >= mina[0] and p[1] >= mina[1] and p[0] <= maxa[0] and p[1] <= maxa[1]:
+            res_idx.append(i)
+
+    return pointArray[res_idx]
+
+def get_ROIs(instances, use_obb=True):
     rois = []
-    for i in range(len(instances)):
-        inst = np.array(instances[i])
+    if use_obb:
+        for i in range(len(instances)):
+            inst = np.array(instances[i])
+            center, radius, mina, maxa, eigenvector = OBB(inst[:, :2])
+            # inst = np.array(instances[i])
 
-        max_x = np.max(inst[:, 0])
-        min_x = np.min(inst[:, 0])
-        max_y = np.max(inst[:, 1])
-        min_y = np.min(inst[:, 1])
+            # max_x = np.max(inst[:, 0])
+            # min_x = np.min(inst[:, 0])
+            # max_y = np.max(inst[:, 1])
+            # min_y = np.min(inst[:, 1])
 
-        roi = [[min_x, min_y], [max_x, max_y]]
+            # roi = [[min_x, min_y], [max_x, max_y]]
 
-        rois.append(roi)
+            rois.append({"center":center, "radius":radius, "mina":mina, "maxa":maxa, "eigenvector":eigenvector})
     
     return rois
 
-building_pc = o3d.io.read_point_cloud("./gt_instance/buildings_area46/524.txt", format="xyz")
+building_pc = o3d.io.read_point_cloud(area_path + str(buildingID) + ".txt", format="xyz")
 
 points = np.asarray(building_pc.points)
 sorted_idx = points[:, 2].argsort()
@@ -69,7 +95,7 @@ while(idx < l):
     print("................WHILE................")
     idx += step
     block = sorted_points[last_time_idx:idx]
-    clustering = DBSCAN(eps=5, min_samples=5).fit(block)
+    clustering = DBSCAN(eps=2.0, min_samples=5).fit(block)
     labels = clustering.labels_
     n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
 
@@ -103,9 +129,9 @@ while(idx < l):
                 map_flag = False
                 
                 for roi2_idx, roi2 in enumerate(building_instances_roi):
-                    is_contain, d = compare_ROIs(roi1, roi2)
-                    print("is_contain:", is_contain, "distance:", d)
-                    if d < ROI_MIN_DISTANCE:
+                    diff = compare_ROIs(roi1, roi2)
+                    print("center diff:", diff)
+                    if diff < ROI_THRESHOLD:
                         block2building_idx_map[roi1_idx] = roi2_idx
                         map_flag = True
                         break
@@ -115,9 +141,9 @@ while(idx < l):
         else:
             for roi1_idx, roi1 in enumerate(block_instances_roi):
                 for roi2_idx, roi2 in enumerate(building_instances_roi):
-                    is_contain, d = compare_ROIs(roi1, roi2)
-                    print("is_contain:", is_contain, "distance:", d)
-                    if d < ROI_MIN_DISTANCE:
+                    diff = compare_ROIs(roi1, roi2)
+                    print("center diff:", diff)
+                    if diff < ROI_THRESHOLD:
                         block2building_idx_map[roi1_idx] = roi2_idx
                         break
         
@@ -163,4 +189,4 @@ while(idx < l):
     last_time_idx += step
 
 for id, inst in enumerate(building_instances):
-    np.savetxt("./gt_instance/buildings_area46/524_" + str(id) + ".txt", inst)
+    np.savetxt(area_path + str(buildingID) + "_" + str(id) + ".txt", inst)

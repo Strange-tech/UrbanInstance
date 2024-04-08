@@ -6,7 +6,7 @@ import os
 import json
 
 # [X, Y, Z]
-IGNORE_SCALE = [True, True, False]
+# IGNORE_SCALE = [True, True, False]
 
 def to_stdXYZ_matrix(coord_system):
     matrix = np.hstack((coord_system, np.array([[0], [0], [0]])))
