@@ -3,7 +3,6 @@ import open3d as o3d
 import numpy as np
 import os
 
-
 def mkdir(path):
     folder = os.path.exists(path)
     if not folder:
@@ -91,7 +90,7 @@ COLOR = np.array(
         # 1.000, 1.000, 1.000
     ]).reshape(-1, 3)
 
-areaID = 47
+areaID = 48
 
 # area9 = np.loadtxt("../dataset/Area9.txt")
 # area49 = np.loadtxt("../dataset/Area49.txt")

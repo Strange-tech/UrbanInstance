@@ -3,6 +3,15 @@ import open3d as o3d
 import numpy as np
 from scipy import cluster
 from sklearn.cluster import DBSCAN, KMeans
+import os
+
+def mkdir(path):
+    folder = os.path.exists(path)
+    if not folder:
+        os.makedirs(path)
+        print("mkdir success")
+    else:
+        print("dir exists")
 
 COLOR = np.array(
     [
@@ -82,23 +91,27 @@ COLOR = np.array(
         # 1.000, 1.000, 1.000
     ]).reshape(-1, 3)
 
+areaID = 46
+
 # area9 = np.loadtxt("../dataset/Area9.txt")
-area9 = np.loadtxt("../dataset/Area9.txt")
+# area49 = np.loadtxt("../dataset/Area49.txt")
+# area46 = np.loadtxt("../dataset/Area46.txt")
+area = np.loadtxt("../dataset/Area" + str(areaID) + ".txt")
 
 # X Y Z R G B Semantic_label Instance_label Fine-grained_building_category
 
-print(area9.shape)
+print(area.shape)
 
 # 'Vehicle': 4
 
 car_idx = []
 
-for i in range(len(area9)):
-    el = area9[i]
+for i in range(len(area)):
+    el = area[i]
     if el[-3] == 4:
         car_idx.append(i)
 
-cars = area9[car_idx]
+cars = area[car_idx]
 
 print(cars.shape)
 
@@ -120,14 +133,15 @@ for i in range(len(labels)):
     # print(COLOR[labels[i] % len(COLOR)])
     label_colors.append(COLOR[labels[i] % len(COLOR)])
 label_colors = np.array(label_colors)
-# print(labels.shape)
-# print(cars[:,:3].shape)
+print(labels.shape)
+print(cars[:,:3].shape)
 
-# pcd = o3d.geometry.PointCloud()
-# pcd.points = o3d.utility.Vector3dVector(cars[:,:3])
-# pcd.colors = o3d.utility.Vector3dVector(label_colors)
+pcd = o3d.geometry.PointCloud()
+pcd.points = o3d.utility.Vector3dVector(cars[:,:3])
+pcd.colors = o3d.utility.Vector3dVector(label_colors)
 
 # o3d.visualization.draw_geometries([pcd])
+o3d.io.write_point_cloud("cars.pcd", pcd)
 
 cars_instance = [None] * len(set(labels))
 for i in range(len(labels)):
@@ -135,8 +149,8 @@ for i in range(len(labels)):
         cars_instance[labels[i]] = []
     cars_instance[labels[i]].append(cars[i])
 
-
-# print(len(cars_instance))
+area_path = "../gt_instance/cars_area" + str(areaID) + "/"
+mkdir(area_path)
 
 for id in range(len(cars_instance)):
-    np.savetxt("../gt_instance/cars_area9/" + str(id) + ".txt", cars_instance[id])
+    np.savetxt(area_path + str(id) + ".txt", cars_instance[id])
