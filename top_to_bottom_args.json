@@ -1,0 +1,84 @@
+[
+    {
+        "areaID": 46,
+        "args": [
+        {
+            "buildingID": 524,
+            "slice_num": 5,
+            "dbscan_min_dist": 2.0
+        },
+        {
+            "buildingID": 494,
+            "slice_num": 3,
+            "dbscan_min_dist": 2.0
+        }]
+    },
+    {
+        "areaID": 41,
+        "args": [
+        {
+            "buildingID": 546,
+            "slice_num": 3,
+            "dbscan_min_dist": 2.0
+        }]
+    },
+    {
+        "areaID": 47,
+        "args": [
+        {
+            "buildingID": 985,
+            "slice_num": 3,
+            "dbscan_min_dist": 2.0
+        }]
+    },
+    {
+        "areaID": 3,
+        "args": [
+        {
+            "buildingID": 1048,
+            "slice_num": 3,
+            "dbscan_min_dist": 2.0
+        },
+        {
+            "buildingID": 1047,
+            "slice_num": 3,
+            "dbscan_min_dist": 2.0
+        }
+        ]
+    },
+    {
+        "areaID": 9,
+        "args": [
+        {
+            "buildingID": 332,
+            "slice_num": 10,
+            "dbscan_min_dist": 2.0
+        },
+        {
+            "buildingID": 328,
+            "slice_num": 5,
+            "dbscan_min_dist": 3.0
+        },
+        {
+            "buildingID": 322,
+            "slice_num": 10,
+            "dbscan_min_dist": 3.0
+        }
+        ]
+    },
+    {
+        "areaID": 7,
+        "args": [
+        {
+            "buildingID": 336,
+            "slice_num": 5,
+            "dbscan_min_dist": 3.0
+        },
+        {
+            "buildingID": 329,
+            "slice_num": 3,
+            "dbscan_min_dist": 3.0
+        }
+        ]
+    }
+]

@@ -4,16 +4,18 @@ import numpy as np
 import math
 from sklearn.cluster import DBSCAN, KMeans
 from utils import OBB
+import json
 
 ROI_THRESHOLD = 10.0
 SET_NEW = 1e8
 REACH_BASE = False
 
-areaID = 46
+areaID = 7
 area_path = "./gt_instance/buildings_area" + str(areaID) + "/"
-buildingID = 494
-slice_num = 5
-dbscan_min_dist = 2.0
+buildingID = 329
+
+slice_num = 3
+dbscan_min_dist = 3.0
 
     
 def compare_ROIs(roi1, roi2):
@@ -166,8 +168,7 @@ while(idx < l):
     print(block_instances_roi)
     print("block inst sample:")
     for id, inst in enumerate(block_instances):
-        print(inst[0])
-        np.savetxt(area_path + str(idx) + "_" + str(id) + ".txt", inst)                 
+        print(inst[0])           
 
     
     if len(building_instances) == 0:
@@ -179,7 +180,6 @@ while(idx < l):
                     inside_points = inside_ROI(block_inst, roi)
                     if len(inside_points) > 0:
                         building_instances[roi_idx] = np.vstack((building_instances[roi_idx], inside_points))
-                    np.savetxt(area_path + "reach_base_" + str(idx) + "_" + str(roi_idx) + ".txt", inside_points) 
         else:
             for block_idx, block_inst in enumerate(block_instances):
                 print(block_idx)
@@ -188,8 +188,7 @@ while(idx < l):
                 if building_idx == SET_NEW:
                     building_instances.append(block_inst)
                 else:
-                    building_instances[building_idx] = np.vstack((building_instances[building_idx], block_inst))
-                # np.savetxt(area_path + "not_base_" + str(idx) + "_" + str(block_idx) + ".txt", block_inst)                 
+                    building_instances[building_idx] = np.vstack((building_instances[building_idx], block_inst))              
 
     building_instances_roi = get_ROIs(building_instances)
     print(len(building_instances))

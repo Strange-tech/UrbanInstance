@@ -90,7 +90,7 @@ COLOR = np.array(
         # 1.000, 1.000, 1.000
     ]).reshape(-1, 3)
 
-areaID = 48
+areaID = 3
 
 # area9 = np.loadtxt("../dataset/Area9.txt")
 # area49 = np.loadtxt("../dataset/Area49.txt")
