@@ -4,17 +4,16 @@ import numpy as np
 import math
 from sklearn.cluster import DBSCAN, KMeans
 from utils import OBB
-import json
 
 ROI_THRESHOLD = 10.0
 SET_NEW = 1e8
 REACH_BASE = False
 
-areaID = 7
+areaID = 38
 area_path = "./gt_instance/buildings_area" + str(areaID) + "/"
-buildingID = 329
+buildingID = 610
 
-slice_num = 3
+slice_num = 10
 dbscan_min_dist = 3.0
 
     
