@@ -90,12 +90,12 @@ COLOR = np.array(
         # 1.000, 1.000, 1.000
     ]).reshape(-1, 3)
 
-areaID = 3
+areaID = 26
 
 # area9 = np.loadtxt("../dataset/Area9.txt")
 # area49 = np.loadtxt("../dataset/Area49.txt")
 # area46 = np.loadtxt("../dataset/Area46.txt")
-area = np.loadtxt("../dataset/Area" + str(areaID) + ".txt")
+area = np.loadtxt("../data/Area" + str(areaID) + ".txt")
 
 # X Y Z R G B Semantic_label Instance_label Fine-grained_building_category
 
